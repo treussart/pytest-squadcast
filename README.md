@@ -14,7 +14,7 @@ Allow to send incident on Squadcast product.
 
 ## Create payload via hook
 
-    def pytest_squadcast_create_payload(session: Session, exitstatus: Union[int, ExitCode]) -> dict:
+    def pytest_squadcast_create_payload(session: Session) -> dict:
         reporter = session.config.pluginmanager.get_plugin('terminalreporter')
         return {"data": {
                             "message": "This will be the incident message",

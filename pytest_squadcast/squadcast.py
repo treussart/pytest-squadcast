@@ -27,12 +27,13 @@ class Squadcast:
 
     def send_incident(self, session: Session, exitstatus: Union[int, ExitCode]):
         # https://support.squadcast.com/docs/apiv2
-        payload = session.config.hook.pytest_squadcast_create_payload(
-            session=session, exitstatus=exitstatus
-        )
-        if not payload:
-            raise Exception("you must implement the hook to create payload")
-        requests.post(
-            url=f"https://api.squadcast.com/v2/incidents/api/{payload[0]['service']}",
-            json=payload[0]["data"],
-        )
+        if exitstatus != 0:
+            payload = session.config.hook.pytest_squadcast_create_payload(
+                session=session
+            )
+            if not payload:
+                raise Exception("you must implement the hook to create payload")
+            requests.post(
+                url=f"https://api.squadcast.com/v2/incidents/api/{payload[0]['service']}",
+                json=payload[0]["data"],
+            )
