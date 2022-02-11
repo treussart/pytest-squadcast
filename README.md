@@ -1,4 +1,4 @@
-# pytest-zulip
+# pytest-squadcast
 
 Pytest report plugin for [Squadcast](https://www.squadcast.com/)
 
