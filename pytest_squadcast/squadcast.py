@@ -22,7 +22,8 @@ class Squadcast:
         exitstatus: Union[int, ExitCode],
         config: Config,
     ):
-        terminalreporter.write_sep("-", "incident reported on Squadcast")
+        if exitstatus != 0:
+            terminalreporter.write_sep("-", "incident reported on Squadcast")
 
     def send_incident(self, session: Session, exitstatus: Union[int, ExitCode]):
         # https://support.squadcast.com/docs/apiv2
