@@ -13,7 +13,8 @@ class Squadcast:
 
     @pytest.hookimpl(trylast=True)
     def pytest_sessionfinish(self, session: Session, exitstatus: Union[int, ExitCode]):
-        self.send_incident(session, exitstatus)
+        if session.config.hook.pytest_squadcast_send_alert(exitstatus=exitstatus):
+            self.send_incident(session, exitstatus)
 
     @pytest.hookimpl(trylast=True)
     def pytest_terminal_summary(
@@ -22,18 +23,17 @@ class Squadcast:
         exitstatus: Union[int, ExitCode],
         config: Config,
     ):
-        if exitstatus != 0:
+        if config.hook.pytest_squadcast_send_alert(exitstatus=exitstatus):
             terminalreporter.write_sep("-", "incident reported on Squadcast")
 
     def send_incident(self, session: Session, exitstatus: Union[int, ExitCode]):
         # https://support.squadcast.com/docs/apiv2
-        if exitstatus != 0:
-            payload = session.config.hook.pytest_squadcast_create_payload(
-                session=session
-            )
-            if not payload:
-                raise Exception("you must implement the hook to create payload")
-            requests.post(
-                url=f"https://api.squadcast.com/v2/incidents/api/{payload[0]['service']}",
-                json=payload[0]["data"],
-            )
+        payload = session.config.hook.pytest_squadcast_create_payload(
+            session=session
+        )
+        if not payload:
+            raise Exception("you must implement the hook to create payload")
+        requests.post(
+            url=f"https://api.squadcast.com/v2/incidents/api/{payload[0]['service']}",
+            json=payload[0]["data"],
+        )
