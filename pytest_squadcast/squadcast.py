@@ -13,7 +13,7 @@ class Squadcast:
 
     @pytest.hookimpl(trylast=True)
     def pytest_sessionfinish(self, session: Session, exitstatus: Union[int, ExitCode]):
-        if session.config.hook.pytest_squadcast_send_alert(exitstatus=exitstatus):
+        if session.config.hook.pytest_squadcast_send_alert(exitstatus=exitstatus)[0]:
             self.send_incident(session, exitstatus)
 
     @pytest.hookimpl(trylast=True)
@@ -23,7 +23,7 @@ class Squadcast:
         exitstatus: Union[int, ExitCode],
         config: Config,
     ):
-        if config.hook.pytest_squadcast_send_alert(exitstatus=exitstatus):
+        if config.hook.pytest_squadcast_send_alert(exitstatus=exitstatus)[0]:
             terminalreporter.write_sep("-", "incident reported on Squadcast")
 
     def send_incident(self, session: Session, exitstatus: Union[int, ExitCode]):
